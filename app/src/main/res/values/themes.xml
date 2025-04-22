@@ -1,49 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Spendlyze" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand colors -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryContainer">@color/primary_light</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorOnPrimaryContainer">@color/text_primary</item>
-        
-        <!-- Secondary brand colors -->
-        <item name="colorSecondary">@color/secondary</item>
-        <item name="colorSecondaryContainer">@color/secondary_light</item>
-        <item name="colorOnSecondary">@android:color/black</item>
-        <item name="colorOnSecondaryContainer">@color/text_primary</item>
-        
-        <!-- Accent colors -->
-        <item name="colorTertiary">@color/accent</item>
-        <item name="colorTertiaryContainer">@color/accent_dark</item>
-        <item name="colorOnTertiary">@android:color/white</item>
-        <item name="colorOnTertiaryContainer">@color/text_primary</item>
-        
-        <!-- Error colors -->
-        <item name="colorError">@color/error</item>
-        <item name="colorOnError">@android:color/white</item>
-        <item name="colorErrorContainer">@color/error</item>
-        <item name="colorOnErrorContainer">@android:color/white</item>
-        
-        <!-- Background colors -->
-        <item name="android:colorBackground">@color/background</item>
-        <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-        <item name="colorSurfaceVariant">@color/surface</item>
-        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
-        
-        <!-- Text colors -->
-        <item name="android:textColorPrimary">@color/text_primary</item>
-        <item name="android:textColorSecondary">@color/text_secondary</item>
-        <item name="android:textColorHint">@color/text_hint</item>
-        
-        <!-- Status bar color -->
-        <item name="android:statusBarColor">@color/primary</item>
-        
-        <!-- Enable window content transitions -->
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowEnterTransition">@android:transition/fade</item>
-        <item name="android:windowExitTransition">@android:transition/fade</item>
-    </style>
+    <style name="Theme.Spendlyze" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
