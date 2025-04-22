@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_dashboard">
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.spendlyze.ui.dashboard.DashboardFragment"
+        android:label="@string/nav_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_transactions"
+        android:name="com.example.spendlyze.ui.transactions.TransactionsFragment"
+        android:label="@string/nav_transactions" />
+
+    <fragment
+        android:id="@+id/navigation_budget"
+        android:name="com.example.spendlyze.ui.budget.BudgetFragment"
+        android:label="@string/nav_budget" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.spendlyze.ui.settings.SettingsFragment"
+        android:label="@string/nav_settings" />
+
+    <fragment
+        android:id="@+id/addTransactionFragment"
+        android:name="com.example.spendlyze.ui.transactions.AddTransactionFragment"
+        android:label="@string/add_transaction">
+        <argument
+            android:name="transactionId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+</navigation> 
