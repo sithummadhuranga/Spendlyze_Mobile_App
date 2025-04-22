@@ -9,8 +9,15 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
+import dagger.hilt.android.qualifiers.ApplicationContext
 
-class TransactionRepository(context: Context) {
+@Singleton
+class TransactionRepository @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val gson = Gson()
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
@@ -19,7 +26,7 @@ class TransactionRepository(context: Context) {
         _transactions.value = getTransactionsFromPrefs()
     }
 
-    fun getAllTransactions(): Flow<List<Transaction>> = _transactions
+    fun getAllTransactions(): Flow<List<Transaction>> = _transactions.asStateFlow()
 
     fun getTransactionsByType(type: TransactionType): Flow<List<Transaction>> =
         _transactions.map { transactions ->
@@ -45,9 +52,12 @@ class TransactionRepository(context: Context) {
 
     suspend fun deleteTransaction(transaction: Transaction) {
         val currentList = _transactions.value.toMutableList()
-        currentList.removeAll { it.id == transaction.id }
-        _transactions.value = currentList
-        saveTransactionsToPrefs(currentList)
+        val index = currentList.indexOfFirst { it.id == transaction.id }
+        if (index != -1) {
+            currentList.removeAt(index)
+            _transactions.value = currentList
+            saveTransactionsToPrefs(currentList)
+        }
     }
 
     fun getTotalAmountByType(type: TransactionType): Flow<Double> =
@@ -56,6 +66,16 @@ class TransactionRepository(context: Context) {
                 .filter { it.type == type }
                 .sumOf { it.amount }
         }
+
+    fun updateMonthlyBudget(amount: Double) {
+        prefs.edit()
+            .putFloat("monthly_budget", amount.toFloat())
+            .apply()
+    }
+
+    fun getMonthlyBudget(): Double {
+        return prefs.getFloat("monthly_budget", 0f).toDouble()
+    }
 
     private fun getTransactionsFromPrefs(): List<Transaction> {
         val json = prefs.getString(KEY_TRANSACTIONS, "[]")

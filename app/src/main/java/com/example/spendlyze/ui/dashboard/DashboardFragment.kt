@@ -11,8 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.spendlyze.R
 import com.example.spendlyze.adapters.TransactionAdapter
-import com.example.spendlyze.databinding.DialogUpdateBudgetBinding
 import com.example.spendlyze.databinding.FragmentDashboardBinding
+import com.example.spendlyze.databinding.DialogUpdateBudgetBinding
+import com.example.spendlyze.models.Transaction
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -37,12 +38,19 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        observeDashboardState()
         setupClickListeners()
+        observeDashboardState()
     }
 
     private fun setupRecyclerView() {
-        transactionAdapter = TransactionAdapter()
+        transactionAdapter = TransactionAdapter(
+            onTransactionClick = { transaction ->
+                // Handle transaction click
+            },
+            onTransactionLongClick = { transaction ->
+                showDeleteConfirmationDialog(transaction)
+            }
+        )
         binding.recyclerRecentTransactions.apply {
             adapter = transactionAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -61,63 +69,47 @@ class DashboardFragment : Fragment() {
 
     private fun showUpdateBudgetDialog() {
         val dialogBinding = DialogUpdateBudgetBinding.inflate(layoutInflater)
-        
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.monthly_budget)
             .setView(dialogBinding.root)
-            .setPositiveButton("Update") { dialog, _ ->
-                val amount = dialogBinding.budgetAmountInput.text.toString().toDoubleOrNull()
-                if (amount != null && amount > 0) {
-                    viewModel.updateMonthlyBudget(amount)
-                }
+            .setPositiveButton(R.string.save) { dialog, _ ->
+                val newBudget = dialogBinding.budgetInput.text.toString().toDoubleOrNull() ?: 0.0
+                viewModel.updateMonthlyBudget(newBudget)
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
-            .show()
+            .create()
+        dialog.show()
     }
 
     private fun observeDashboardState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dashboardState.collectLatest { state ->
-                updateDashboardUI(state)
+                binding.apply {
+                    textTotalBalance.text = getString(R.string.currency_format, state.totalBalance)
+                    textIncome.text = getString(R.string.currency_format, state.totalIncome)
+                    textExpenses.text = getString(R.string.currency_format, state.totalExpenses)
+                    textMonthlyBudget.text = getString(R.string.currency_format, state.monthlyBudget)
+                    progressBudget.progress = ((state.totalExpenses / state.monthlyBudget) * 100).toInt()
+                    textSpent.text = getString(R.string.currency_format, state.totalExpenses)
+                    textRemaining.text = getString(R.string.currency_format, state.monthlyBudget - state.totalExpenses)
+                    transactionAdapter.submitList(state.recentTransactions)
+                }
             }
         }
     }
 
-    private fun updateDashboardUI(state: DashboardState) {
-        binding.apply {
-            // Update total balance
-            textTotalBalance.text = String.format("LKR %.2f", state.totalBalance)
-            
-            // Update income
-            textIncome.text = String.format("LKR %.2f", state.totalIncome)
-            
-            // Update expenses
-            textExpenses.text = String.format("LKR %.2f", state.totalExpenses)
-            
-            // Update monthly budget
-            textMonthlyBudget.text = String.format("LKR %.2f", state.monthlyBudget)
-            
-            // Update budget progress
-            progressBudget.progress = state.budgetPercentage.toInt()
-            
-            // Update spent and remaining amounts
-            textSpent.text = String.format("LKR %.2f", state.totalExpenses)
-            textRemaining.text = String.format("LKR %.2f", state.monthlyBudget - state.totalExpenses)
-            
-            // Update recent transactions
-            transactionAdapter.submitList(state.recentTransactions)
-            
-            // Show/hide empty state
-            if (state.recentTransactions.isEmpty()) {
-                recyclerRecentTransactions.visibility = View.GONE
-                recentTransactionsHeader.visibility = View.GONE
-            } else {
-                recyclerRecentTransactions.visibility = View.VISIBLE
-                recentTransactionsHeader.visibility = View.VISIBLE
+    private fun showDeleteConfirmationDialog(transaction: Transaction) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.delete_transaction)
+            .setMessage(R.string.delete_transaction_confirmation)
+            .setPositiveButton(R.string.delete) { _, _ ->
+                viewModel.deleteTransaction(transaction.id)
             }
-        }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     override fun onDestroyView() {

@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.spendlyze.R
 import com.example.spendlyze.adapters.TransactionAdapter
 import com.example.spendlyze.databinding.FragmentBudgetBinding
 import com.example.spendlyze.models.TransactionType
@@ -41,11 +43,31 @@ class BudgetFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        transactionAdapter = TransactionAdapter()
+        transactionAdapter = TransactionAdapter(
+            onTransactionClick = { transaction ->
+                // Navigate to transaction details or edit screen
+                // TODO: Implement transaction details navigation
+            },
+            onTransactionLongClick = { transaction ->
+                // Show delete confirmation dialog
+                showDeleteConfirmationDialog(transaction.id)
+            }
+        )
         binding.recentExpensesRecyclerView.apply {
             adapter = transactionAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+    }
+
+    private fun showDeleteConfirmationDialog(transactionId: Long) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Delete Transaction")
+            .setMessage("Are you sure you want to delete this transaction?")
+            .setPositiveButton("Delete") { _, _ ->
+                viewModel.deleteTransaction(transactionId)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun observeBudgetState() {
@@ -58,19 +80,32 @@ class BudgetFragment : Fragment() {
 
     private fun updateBudgetUI(state: BudgetState) {
         binding.apply {
-            budgetAmount.text = String.format("$%.2f", state.monthlyBudget)
-            totalExpensesText.text = String.format("$%.2f spent", state.totalExpenses)
-            budgetPercentageText.text = String.format("%.1f%% Used", state.percentageUsed)
-            budgetProgressBar.progress = state.percentageUsed.toInt()
+            // Update budget title
+            budgetTitle.text = "Monthly Budget"
             
-            // Update progress bar color based on percentage
-            budgetProgressBar.setIndicatorColor(
-                when {
-                    state.percentageUsed >= 90 -> 0xFFFF5252.toInt() // Red
-                    state.percentageUsed >= 75 -> 0xFFFFB74D.toInt() // Orange
-                    else -> 0xFF4CAF50.toInt() // Green
-                }
-            )
+            // Update budget amount
+            budgetAmount.text = String.format("LKR %.2f", state.monthlyBudget)
+            
+            // Update budget percentage
+            budgetPercentageText.text = String.format("%.1f%%", state.budgetPercentage)
+            
+            // Update total expenses
+            totalExpensesText.text = String.format("LKR %.2f", state.totalExpenses)
+            
+            // Update progress indicator
+            budgetProgressBar.progress = state.budgetPercentage.toInt()
+            
+            // Update recent expenses
+            transactionAdapter.submitList(state.recentExpenses)
+            
+            // Show/hide empty state
+            if (state.recentExpenses.isEmpty()) {
+                recentExpensesRecyclerView.visibility = View.GONE
+                recentExpensesTitle.visibility = View.GONE
+            } else {
+                recentExpensesRecyclerView.visibility = View.VISIBLE
+                recentExpensesTitle.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -86,7 +121,7 @@ class BudgetFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setView(dialogBinding.root)
             .setPositiveButton("Update") { dialog, _ ->
-                val amount = dialogBinding.budgetAmountInput.text.toString().toDoubleOrNull()
+                val amount = dialogBinding.budgetInput.text.toString().toDoubleOrNull()
                 if (amount != null && amount > 0) {
                     viewModel.updateMonthlyBudget(amount)
                 }

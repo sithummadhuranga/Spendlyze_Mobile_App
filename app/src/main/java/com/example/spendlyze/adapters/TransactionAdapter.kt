@@ -13,7 +13,10 @@ import com.example.spendlyze.models.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TransactionAdapter : ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
+class TransactionAdapter(
+    private val onTransactionClick: (Transaction) -> Unit,
+    private val onTransactionLongClick: (Transaction) -> Unit
+) : ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val binding = ItemTransactionBinding.inflate(
@@ -25,27 +28,41 @@ class TransactionAdapter : ListAdapter<Transaction, TransactionAdapter.Transacti
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val transaction = getItem(position)
+        holder.bind(transaction)
     }
 
-    class TransactionViewHolder(
+    inner class TransactionViewHolder(
         private val binding: ItemTransactionBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val dateFormatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
 
+        init {
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onTransactionClick(getItem(position))
+                }
+            }
+
+            binding.root.setOnLongClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onTransactionLongClick(getItem(position))
+                }
+                true
+            }
+        }
+
         fun bind(transaction: Transaction) {
             binding.apply {
                 descriptionText.text = transaction.description
-                amountText.text = when (transaction.type) {
-                    TransactionType.INCOME -> "+${transaction.amount}"
-                    TransactionType.EXPENSE -> "-${transaction.amount}"
-                }
-                amountText.setTextColor(ContextCompat.getColor(root.context, 
-                    if (transaction.type == TransactionType.INCOME) R.color.income_green else R.color.expense_red))
-                
+                amountText.text = String.format("LKR %.2f", transaction.amount)
                 categoryText.text = transaction.category
                 dateText.text = dateFormatter.format(transaction.date)
+                amountText.setTextColor(ContextCompat.getColor(root.context, 
+                    if (transaction.type == TransactionType.INCOME) R.color.income_green else R.color.expense_red))
                 
                 typeIcon.setImageResource(
                     if (transaction.type == TransactionType.INCOME) R.drawable.ic_income

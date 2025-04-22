@@ -66,4 +66,10 @@
     <!-- Budget Tips -->
     <string name="budget_tips">Budget Tips</string>
     <string name="budget_tips_content">1. Track all your expenses\n2. Set realistic budget goals\n3. Prioritize essential expenses\n4. Save for emergencies\n5. Review and adjust your budget regularly</string>
+    
+    <!-- Transaction Actions -->
+    <string name="delete_transaction">Delete Transaction</string>
+    <string name="delete_transaction_confirmation">Are you sure you want to delete this transaction?</string>
+    <string name="delete">Delete</string>
+    <string name="transaction_deleted">Transaction deleted</string>
 </resources>

@@ -14,6 +14,7 @@ import com.example.spendlyze.databinding.FragmentTransactionsBinding
 import com.example.spendlyze.models.Transaction
 import com.example.spendlyze.models.TransactionType
 import com.example.spendlyze.ui.transactions.TransactionViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -43,7 +44,14 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        transactionAdapter = TransactionAdapter()
+        transactionAdapter = TransactionAdapter(
+            onTransactionClick = { transaction ->
+                showEditTransactionDialog(transaction)
+            },
+            onTransactionLongClick = { transaction ->
+                showDeleteConfirmationDialog(transaction)
+            }
+        )
         binding.recyclerView.apply {
             adapter = transactionAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -83,8 +91,23 @@ class TransactionsFragment : Fragment() {
         )
     }
 
-    private fun showTransactionDetails(transaction: Transaction) {
-        // Show transaction details dialog or navigate to details screen
+    private fun showEditTransactionDialog(transaction: Transaction) {
+        EditTransactionFragment.newInstance(transaction).show(
+            childFragmentManager,
+            EditTransactionFragment.TAG
+        )
+    }
+
+    private fun showDeleteConfirmationDialog(transaction: Transaction) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.delete_transaction)
+            .setMessage(R.string.delete_transaction_confirmation)
+            .setPositiveButton(R.string.delete) { _, _ ->
+                viewModel.deleteTransaction(transaction)
+                Snackbar.make(binding.root, R.string.transaction_deleted, Snackbar.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun updateEmptyState(isEmpty: Boolean) {

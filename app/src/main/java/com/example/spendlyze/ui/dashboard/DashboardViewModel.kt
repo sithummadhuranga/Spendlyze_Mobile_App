@@ -11,6 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,15 +20,13 @@ data class DashboardState(
     val totalBalance: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalExpenses: Double = 0.0,
-    val monthlyBudget: Double = 1000.0, // Default budget
-    val budgetPercentage: Double = 0.0,
-    val recentTransactions: List<Transaction> = emptyList(),
-    val isLoading: Boolean = false
+    val monthlyBudget: Double = 0.0,
+    val recentTransactions: List<Transaction> = emptyList()
 )
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val repository: TransactionRepository,
+    private val transactionRepository: TransactionRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     
@@ -42,39 +42,23 @@ class DashboardViewModel @Inject constructor(
 
     private fun loadDashboardData() {
         viewModelScope.launch {
-            _dashboardState.value = _dashboardState.value.copy(isLoading = true)
+            val monthlyBudget = transactionRepository.getMonthlyBudget()
             
-            repository.getAllTransactions().collect { transactions ->
+            transactionRepository.getAllTransactions().collectLatest { transactions ->
                 val totalIncome = transactions
                     .filter { it.type == TransactionType.INCOME }
                     .sumOf { it.amount }
-                
                 val totalExpenses = transactions
                     .filter { it.type == TransactionType.EXPENSE }
                     .sumOf { it.amount }
+                val balance = totalIncome - totalExpenses
                 
-                val totalBalance = totalIncome - totalExpenses
-                
-                // Calculate budget percentage
-                val currentBudget = _dashboardState.value.monthlyBudget
-                val budgetPercentage = if (currentBudget > 0) {
-                    (totalExpenses / currentBudget) * 100
-                } else {
-                    0.0
-                }
-                
-                // Get recent transactions (last 5)
-                val recentTransactions = transactions
-                    .sortedByDescending { it.date }
-                    .take(5)
-
-                _dashboardState.value = _dashboardState.value.copy(
-                    totalBalance = totalBalance,
+                _dashboardState.value = DashboardState(
+                    totalBalance = balance,
                     totalIncome = totalIncome,
                     totalExpenses = totalExpenses,
-                    budgetPercentage = budgetPercentage,
-                    recentTransactions = recentTransactions,
-                    isLoading = false
+                    monthlyBudget = monthlyBudget,
+                    recentTransactions = transactions.take(5)
                 )
             }
         }
@@ -82,22 +66,23 @@ class DashboardViewModel @Inject constructor(
 
     fun updateMonthlyBudget(amount: Double) {
         viewModelScope.launch {
-            val currentState = _dashboardState.value
-            val budgetPercentage = if (amount > 0) {
-                (currentState.totalExpenses / amount) * 100
-            } else {
-                0.0
+            transactionRepository.updateMonthlyBudget(amount)
+            loadDashboardData()
+        }
+    }
+
+    fun deleteTransaction(transactionId: Long) {
+        viewModelScope.launch {
+            // Get the current list of transactions
+            val currentTransactions = transactionRepository.getAllTransactions().first()
+            
+            // Find the transaction to delete
+            val transactionToDelete = currentTransactions.find { it.id == transactionId }
+            
+            // Delete only this specific transaction
+            transactionToDelete?.let { transaction ->
+                transactionRepository.deleteTransaction(transaction)
             }
-            
-            // Save to SharedPreferences
-            prefs.edit()
-                .putFloat("monthly_budget", amount.toFloat())
-                .apply()
-            
-            _dashboardState.value = currentState.copy(
-                monthlyBudget = amount,
-                budgetPercentage = budgetPercentage
-            )
         }
     }
 } 
