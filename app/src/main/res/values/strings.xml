@@ -2,5 +2,6 @@
 <resources>
     <string name="app_name">Spendlyze</string>
     <string name="next">Next</string>
+    <string name="skip">Skip</string>
     <string name="onboarding_image">Onboarding Image</string>
 </resources>

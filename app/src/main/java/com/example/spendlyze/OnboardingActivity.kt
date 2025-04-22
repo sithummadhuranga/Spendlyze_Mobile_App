@@ -16,6 +16,7 @@ class OnboardingActivity : AppCompatActivity() {
     private lateinit var onboardingItemsAdapter: OnboardingItemsAdapter
     private lateinit var indicatorsContainer: LinearLayout
     private lateinit var buttonNext: MaterialButton
+    private lateinit var buttonSkip: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +65,7 @@ class OnboardingActivity : AppCompatActivity() {
             }
         })
 
+        // Initialize Next button
         buttonNext = findViewById(R.id.buttonNext)
         buttonNext.setOnClickListener {
             if (onboardingViewPager.currentItem + 1 < onboardingItemsAdapter.itemCount) {
@@ -71,6 +73,12 @@ class OnboardingActivity : AppCompatActivity() {
             } else {
                 startMainActivity()
             }
+        }
+
+        // Initialize Skip button
+        buttonSkip = findViewById(R.id.buttonSkip)
+        buttonSkip.setOnClickListener {
+            startMainActivity()
         }
     }
 
