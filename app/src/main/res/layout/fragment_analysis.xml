@@ -29,15 +29,11 @@
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pieChart"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                app:layout_constraintBottom_toTopOf="@id/legendContainer"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.8" />
+                android:layout_weight="1" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -51,6 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
+            android:id="@+id/legendContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -68,6 +65,7 @@
                 android:layout_marginTop="16dp"
                 android:orientation="vertical">
 
+                <!-- Food -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -87,13 +85,14 @@
                         android:textAppearance="?attr/textAppearanceBody1" />
 
                     <TextView
-                        android:id="@+id/foodAmountText"
+                        android:id="@+id/tvFoodLegend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="LKR 5,000.00" />
+                        tools:text="Food: $5,000.00 (25%)" />
                 </LinearLayout>
 
+                <!-- Transport -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -114,13 +113,14 @@
                         android:textAppearance="?attr/textAppearanceBody1" />
 
                     <TextView
-                        android:id="@+id/transportAmountText"
+                        android:id="@+id/tvTransportLegend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="LKR 3,000.00" />
+                        tools:text="Transport: $3,000.00 (15%)" />
                 </LinearLayout>
 
+                <!-- Shopping -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -141,13 +141,14 @@
                         android:textAppearance="?attr/textAppearanceBody1" />
 
                     <TextView
-                        android:id="@+id/shoppingAmountText"
+                        android:id="@+id/tvShoppingLegend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="LKR 8,000.00" />
+                        tools:text="Shopping: $8,000.00 (40%)" />
                 </LinearLayout>
 
+                <!-- Bills -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -168,13 +169,98 @@
                         android:textAppearance="?attr/textAppearanceBody1" />
 
                     <TextView
-                        android:id="@+id/billsAmountText"
+                        android:id="@+id/tvBillsLegend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="LKR 12,000.00" />
+                        tools:text="Bills: $12,000.00 (60%)" />
                 </LinearLayout>
 
+                <!-- Entertainment -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@color/category_entertainment" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:text="Entertainment"
+                        android:textAppearance="?attr/textAppearanceBody1" />
+
+                    <TextView
+                        android:id="@+id/tvEntertainmentLegend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        tools:text="Entertainment: $2,000.00 (10%)" />
+                </LinearLayout>
+
+                <!-- Health -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@color/category_health" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:text="Health"
+                        android:textAppearance="?attr/textAppearanceBody1" />
+
+                    <TextView
+                        android:id="@+id/tvHealthLegend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        tools:text="Health: $1,500.00 (7.5%)" />
+                </LinearLayout>
+
+                <!-- Education -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@color/category_education" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:text="Education"
+                        android:textAppearance="?attr/textAppearanceBody1" />
+
+                    <TextView
+                        android:id="@+id/tvEducationLegend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        tools:text="Education: $3,500.00 (17.5%)" />
+                </LinearLayout>
+
+                <!-- Other -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -195,82 +281,26 @@
                         android:textAppearance="?attr/textAppearanceBody1" />
 
                     <TextView
-                        android:id="@+id/otherAmountText"
+                        android:id="@+id/tvOtherLegend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="LKR 4,500.00" />
+                        tools:text="Other: $2,000.00 (10%)" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
-        android:id="@+id/legendContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/tvFoodLegend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawablePadding="8dp"
-            android:padding="8dp"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvTransportLegend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawablePadding="8dp"
-            android:padding="8dp"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvShoppingLegend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawablePadding="8dp"
-            android:padding="8dp"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvBillsLegend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawablePadding="8dp"
-            android:padding="8dp"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvOtherLegend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawablePadding="8dp"
-            android:padding="8dp"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
     <TextView
         android:id="@+id/tvNoData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/no_transactions"
-        android:textColor="@color/text_secondary"
-        android:textSize="16sp"
+        android:text="@string/no_data"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout> 

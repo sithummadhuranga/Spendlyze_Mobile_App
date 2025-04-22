@@ -50,14 +50,16 @@ class AddTransactionFragment : DialogFragment() {
     }
 
     private fun setupSpinner() {
-        val categories = arrayOf("Food", "Transport", "Shopping", "Bills", "Entertainment", "Other")
+        val categories = resources.getStringArray(R.array.transaction_categories)
         val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, categories)
-        binding.categorySpinner.setAdapter(adapter)  // Use setAdapter instead of direct assignment
-        binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedCategory = parent?.getItemAtPosition(position).toString()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        binding.categorySpinner.setAdapter(adapter)
+        
+        // Set initial selection
+        binding.categorySpinner.setText(categories[0], false)
+        selectedCategory = categories[0]
+        
+        binding.categorySpinner.setOnItemClickListener { _, _, position, _ ->
+            selectedCategory = categories[position]
         }
     }
 

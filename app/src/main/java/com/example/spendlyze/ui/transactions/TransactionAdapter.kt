@@ -1,4 +1,4 @@
-package com.example.spendlyze.adapters
+package com.example.spendlyze.ui.transactions
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

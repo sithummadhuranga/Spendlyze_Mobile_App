@@ -202,16 +202,36 @@
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Recent Transactions Header -->
-        <TextView
-            android:id="@+id/text_recent_transactions"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/recent_transactions_header"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="@string/recent_transactions"
-            android:textAppearance="@style/TextAppearance.Spendlyze.Subtitle1"
-            android:textColor="@color/text_primary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_monthly_budget" />
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/card_monthly_budget">
+
+            <TextView
+                android:id="@+id/text_recent_transactions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/recent_transactions"
+                android:textAppearance="@style/TextAppearance.Spendlyze.Subtitle1"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/text_view_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_all"
+                android:textAppearance="@style/TextAppearance.Spendlyze.Button"
+                android:textColor="@color/primary"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground" />
+
+        </LinearLayout>
 
         <!-- Recent Transactions RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -223,7 +243,7 @@
             android:orientation="vertical"
             android:paddingBottom="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/text_recent_transactions" />
+            app:layout_constraintTop_toBottomOf="@+id/recent_transactions_header" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView> 
