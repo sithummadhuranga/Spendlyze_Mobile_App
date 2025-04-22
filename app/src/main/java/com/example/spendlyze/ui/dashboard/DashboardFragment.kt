@@ -6,8 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.spendlyze.databinding.FragmentDashboardBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DashboardFragment : Fragment() {
@@ -26,13 +29,27 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
+        observeDashboardState()
     }
 
-    private fun setupViews() {
-        // Initialize views and set up click listeners
-        binding.cardTotalBalance.setOnClickListener {
-            // Handle click
+    private fun observeDashboardState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.dashboardState.collectLatest { state ->
+                updateDashboardUI(state)
+            }
+        }
+    }
+
+    private fun updateDashboardUI(state: DashboardState) {
+        binding.apply {
+            // Update total balance
+            textTotalBalance.text = String.format("LKR %.2f", state.totalBalance)
+            
+            // Update income
+            textIncome.text = String.format("LKR %.2f", state.totalIncome)
+            
+            // Update expenses
+            textExpenses.text = String.format("LKR %.2f", state.totalExpenses)
         }
     }
 
