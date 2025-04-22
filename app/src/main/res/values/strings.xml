@@ -21,4 +21,49 @@
     <string name="recent_transactions">Recent Transactions</string>
     <string name="view_all">View All</string>
     <string name="add_transaction">Add Transaction</string>
+    
+    <!-- Transactions -->
+    <string name="transaction_summary">Transaction Summary</string>
+    <string name="no_transactions">No Transactions</string>
+    <string name="empty_transactions">Empty Transactions</string>
+    <string name="add_transaction_to_get_started">Add a transaction to get started</string>
+    <string name="amount">Amount (LKR)</string>
+    <string name="description">Description</string>
+    <string name="category">Category</string>
+    <string name="date">Date</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="error_invalid_input">Please fill all required fields</string>
+    <string name="currency_format">LKR %.2f</string>
+    
+    <!-- Budget -->
+    <string name="set_budget">Set Budget</string>
+    <string name="budget_amount">Budget Amount (LKR)</string>
+    <string name="budget_warning">You are approaching your budget limit!</string>
+    <string name="budget_exceeded">You have exceeded your budget!</string>
+    
+    <!-- Analysis -->
+    <string name="spending_analysis">Spending Analysis</string>
+    <string name="category_breakdown">Category Breakdown</string>
+    <string name="no_data">No data available</string>
+    
+    <!-- Backup -->
+    <string name="backup_data">Backup Data</string>
+    <string name="restore_data">Restore Data</string>
+    <string name="backup_success">Backup created successfully</string>
+    <string name="backup_failed">Backup failed</string>
+    <string name="restore_success">Data restored successfully</string>
+    <string name="restore_failed">Restore failed</string>
+    
+    <!-- Analysis Fragment -->
+    <string name="expense_distribution">Expense Distribution</string>
+    <string name="category_food_total">Food: %d%%</string>
+    <string name="category_transport_total">Transport: %d%%</string>
+    <string name="category_shopping_total">Shopping: %d%%</string>
+    <string name="category_bills_total">Bills: %d%%</string>
+    <string name="category_other_total">Other: %d%%</string>
+    
+    <!-- Budget Tips -->
+    <string name="budget_tips">Budget Tips</string>
+    <string name="budget_tips_content">1. Track all your expenses\n2. Set realistic budget goals\n3. Prioritize essential expenses\n4. Save for emergencies\n5. Review and adjust your budget regularly</string>
 </resources>
