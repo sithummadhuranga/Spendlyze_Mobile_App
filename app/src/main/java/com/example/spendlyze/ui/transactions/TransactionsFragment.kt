@@ -13,15 +13,16 @@ import com.example.spendlyze.adapters.TransactionAdapter
 import com.example.spendlyze.databinding.FragmentTransactionsBinding
 import com.example.spendlyze.models.Transaction
 import com.example.spendlyze.models.TransactionType
-import com.example.spendlyze.ui.viewmodel.TransactionViewModel
+import com.example.spendlyze.ui.transactions.TransactionViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class TransactionsFragment : Fragment() {
     private var _binding: FragmentTransactionsBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel: TransactionViewModel by viewModels()
     private lateinit var transactionAdapter: TransactionAdapter
 
@@ -42,12 +43,10 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        transactionAdapter = TransactionAdapter { transaction ->
-            showTransactionDetails(transaction)
-        }
+        transactionAdapter = TransactionAdapter()
         binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
             adapter = transactionAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -56,18 +55,17 @@ class TransactionsFragment : Fragment() {
             viewModel.transactions.collectLatest { transactions ->
                 transactionAdapter.submitList(transactions)
                 updateEmptyState(transactions.isEmpty())
-            }
-        }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.totalIncome.collectLatest { income ->
-                binding.totalIncomeText.text = getString(R.string.currency_format, income)
-            }
-        }
+                // Update total income and expenses
+                val income = transactions
+                    .filter { it.type == TransactionType.INCOME }
+                    .sumOf { it.amount }
+                val expenses = transactions
+                    .filter { it.type == TransactionType.EXPENSE }
+                    .sumOf { it.amount }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.totalExpense.collectLatest { expense ->
-                binding.totalExpenseText.text = getString(R.string.currency_format, expense)
+                binding.totalIncomeText.text = String.format("$%.2f", income)
+                binding.totalExpenseText.text = String.format("$%.2f", expenses)
             }
         }
     }
@@ -79,7 +77,10 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun showAddTransactionDialog() {
-        AddTransactionDialog().show(childFragmentManager, AddTransactionDialog.TAG)
+        AddTransactionFragment().show(
+            childFragmentManager,
+            AddTransactionFragment.TAG
+        )
     }
 
     private fun showTransactionDetails(transaction: Transaction) {
@@ -94,5 +95,9 @@ class TransactionsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val TAG = "TransactionsFragment"
     }
 } 

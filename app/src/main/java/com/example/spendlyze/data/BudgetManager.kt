@@ -3,6 +3,7 @@ package com.example.spendlyze.data
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.spendlyze.models.Transaction
+import com.example.spendlyze.models.TransactionType
 import com.example.spendlyze.utils.NotificationHelper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

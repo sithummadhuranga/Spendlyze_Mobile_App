@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.example.spendlyze.R
 import com.example.spendlyze.databinding.FragmentAnalysisBinding
 import com.example.spendlyze.models.Transaction
+import com.example.spendlyze.models.TransactionType
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -73,7 +74,7 @@ class AnalysisFragment : Fragment() {
         binding.tvNoData.visibility = View.GONE
 
         val categoryTotals = transactions
-            .filter { it.type == Transaction.TransactionType.EXPENSE }
+            .filter { it.type == TransactionType.EXPENSE }
             .groupBy { it.category }
             .mapValues { it.value.sumOf { transaction -> transaction.amount } }
 
@@ -108,7 +109,7 @@ class AnalysisFragment : Fragment() {
 
     private fun updateLegend(transactions: List<Transaction>) {
         val categoryTotals = transactions
-            .filter { it.type == Transaction.TransactionType.EXPENSE }
+            .filter { it.type == TransactionType.EXPENSE }
             .groupBy { it.category }
             .mapValues { it.value.sumOf { transaction -> transaction.amount } }
 

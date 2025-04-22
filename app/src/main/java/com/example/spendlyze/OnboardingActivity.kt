@@ -132,7 +132,9 @@ class OnboardingActivity : AppCompatActivity() {
             .putBoolean("isCompleted", true)
             .apply()
 
-        startActivity(Intent(applicationContext, MainActivity::class.java))
+        // Start MainActivity
+        val intent = Intent(this, com.example.spendlyze.ui.MainActivity::class.java)
+        startActivity(intent)
         finish()
     }
 

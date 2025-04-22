@@ -7,18 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.spendlyze.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.spendlyze.adapters.TransactionAdapter
 import com.example.spendlyze.databinding.FragmentBudgetBinding
-import com.example.spendlyze.ui.viewmodel.TransactionViewModel
-import com.google.android.material.snackbar.Snackbar
+import com.example.spendlyze.models.TransactionType
+import com.example.spendlyze.databinding.DialogUpdateBudgetBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class BudgetFragment : Fragment() {
     private var _binding: FragmentBudgetBinding? = null
     private val binding get() = _binding!!
-
-    private val viewModel: TransactionViewModel by viewModels()
+    private val viewModel: BudgetViewModel by viewModels()
+    private lateinit var transactionAdapter: TransactionAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,54 +35,67 @@ class BudgetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupObservers()
+        setupRecyclerView()
+        observeBudgetState()
         setupClickListeners()
     }
 
-    private fun setupObservers() {
+    private fun setupRecyclerView() {
+        transactionAdapter = TransactionAdapter()
+        binding.recentExpensesRecyclerView.apply {
+            adapter = transactionAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun observeBudgetState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.transactions.collectLatest { transactions ->
-                updateBudgetProgress(transactions)
+            viewModel.budgetState.collectLatest { state ->
+                updateBudgetUI(state)
             }
         }
     }
 
-    private fun setupClickListeners() {
-        binding.setBudgetButton.setOnClickListener {
-            showSetBudgetDialog()
-        }
-    }
-
-    private fun updateBudgetProgress(transactions: List<Transaction>) {
-        // Update budget progress UI
-        val totalExpense = transactions
-            .filter { it.type == TransactionType.EXPENSE }
-            .sumOf { it.amount }
-        
-        val budget = 50000.0 // This should come from BudgetManager
-        val progress = (totalExpense / budget * 100).toInt()
-        
-        binding.budgetProgressBar.progress = progress.coerceIn(0, 100)
-        binding.spentAmountText.text = getString(R.string.currency_format, totalExpense)
-        binding.remainingAmountText.text = getString(R.string.currency_format, budget - totalExpense)
-        
-        // Update progress color based on percentage
-        val colorResId = when {
-            progress >= 100 -> R.color.expense_red
-            progress >= 90 -> R.color.category_bills
-            else -> R.color.income_green
-        }
-        
-        binding.budgetProgressBar.setProgressTintList(
-            android.content.res.ColorStateList.valueOf(
-                requireContext().getColor(colorResId)
+    private fun updateBudgetUI(state: BudgetState) {
+        binding.apply {
+            budgetAmount.text = String.format("$%.2f", state.monthlyBudget)
+            totalExpensesText.text = String.format("$%.2f spent", state.totalExpenses)
+            budgetPercentageText.text = String.format("%.1f%% Used", state.percentageUsed)
+            budgetProgressBar.progress = state.percentageUsed.toInt()
+            
+            // Update progress bar color based on percentage
+            budgetProgressBar.setIndicatorColor(
+                when {
+                    state.percentageUsed >= 90 -> 0xFFFF5252.toInt() // Red
+                    state.percentageUsed >= 75 -> 0xFFFFB74D.toInt() // Orange
+                    else -> 0xFF4CAF50.toInt() // Green
+                }
             )
-        )
+        }
     }
 
-    private fun showSetBudgetDialog() {
-        // Show dialog to set budget
-        // This will be implemented later
+    private fun setupClickListeners() {
+        binding.budgetCard.setOnClickListener {
+            showUpdateBudgetDialog()
+        }
+    }
+
+    private fun showUpdateBudgetDialog() {
+        val dialogBinding = DialogUpdateBudgetBinding.inflate(layoutInflater)
+        
+        MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogBinding.root)
+            .setPositiveButton("Update") { dialog, _ ->
+                val amount = dialogBinding.budgetAmountInput.text.toString().toDoubleOrNull()
+                if (amount != null && amount > 0) {
+                    viewModel.updateMonthlyBudget(amount)
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onDestroyView() {

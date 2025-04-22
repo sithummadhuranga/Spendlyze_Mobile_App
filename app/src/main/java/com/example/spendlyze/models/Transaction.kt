@@ -3,15 +3,10 @@ package com.example.spendlyze.models
 import java.util.Date
 
 data class Transaction(
-    val id: String = "",
-    val title: String,
+    val id: Long = 0,
     val amount: Double,
+    val description: String,
     val category: String,
-    val date: Date = Date(),
+    val date: Date,
     val type: TransactionType
-)
-
-enum class TransactionType {
-    INCOME,
-    EXPENSE
-} 
+) 
