@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Spendlyze</string>
+    <string name="next">Next</string>
+    <string name="onboarding_image">Onboarding Image</string>
 </resources>
