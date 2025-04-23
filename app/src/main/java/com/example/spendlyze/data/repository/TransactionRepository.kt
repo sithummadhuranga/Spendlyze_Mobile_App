@@ -21,9 +21,12 @@ class TransactionRepository @Inject constructor(
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val gson = Gson()
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
+    private var nextId: Long = 1
 
     init {
         _transactions.value = getTransactionsFromPrefs()
+        // Initialize nextId based on existing transactions
+        nextId = (_transactions.value.maxOfOrNull { it.id } ?: 0) + 1
     }
 
     fun getAllTransactions(): Flow<List<Transaction>> = _transactions.asStateFlow()
@@ -35,7 +38,9 @@ class TransactionRepository @Inject constructor(
 
     suspend fun insertTransaction(transaction: Transaction) {
         val currentList = _transactions.value.toMutableList()
-        currentList.add(transaction)
+        // Create a new transaction with a unique ID
+        val newTransaction = transaction.copy(id = nextId++)
+        currentList.add(newTransaction)
         _transactions.value = currentList
         saveTransactionsToPrefs(currentList)
     }
@@ -52,12 +57,9 @@ class TransactionRepository @Inject constructor(
 
     suspend fun deleteTransaction(transaction: Transaction) {
         val currentList = _transactions.value.toMutableList()
-        val index = currentList.indexOfFirst { it.id == transaction.id }
-        if (index != -1) {
-            currentList.removeAt(index)
-            _transactions.value = currentList
-            saveTransactionsToPrefs(currentList)
-        }
+        currentList.removeIf { it.id == transaction.id }
+        _transactions.value = currentList
+        saveTransactionsToPrefs(currentList)
     }
 
     fun getTotalAmountByType(type: TransactionType): Flow<Double> =

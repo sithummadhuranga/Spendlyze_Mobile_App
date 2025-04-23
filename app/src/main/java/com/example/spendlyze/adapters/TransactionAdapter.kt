@@ -31,6 +31,14 @@ class TransactionAdapter(
         val transaction = getItem(position)
         holder.bind(transaction)
     }
+    
+    fun getTransactionAt(position: Int): Transaction? {
+        return if (position in 0 until currentList.size) {
+            currentList[position]
+        } else {
+            null
+        }
+    }
 
     inner class TransactionViewHolder(
         private val binding: ItemTransactionBinding

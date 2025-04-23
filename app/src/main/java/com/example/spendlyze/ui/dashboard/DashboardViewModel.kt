@@ -76,13 +76,27 @@ class DashboardViewModel @Inject constructor(
             // Get the current list of transactions
             val currentTransactions = transactionRepository.getAllTransactions().first()
             
-            // Find the transaction to delete
+            // Log the transaction ID and current transactions for debugging
+            android.util.Log.d("DashboardViewModel", "Attempting to delete transaction with ID: $transactionId")
+            android.util.Log.d("DashboardViewModel", "Current transactions: ${currentTransactions.map { it.id }}")
+            
+            // Find the transaction to delete by ID
             val transactionToDelete = currentTransactions.find { it.id == transactionId }
             
-            // Delete only this specific transaction
-            transactionToDelete?.let { transaction ->
-                transactionRepository.deleteTransaction(transaction)
+            // Log if transaction was found
+            if (transactionToDelete != null) {
+                android.util.Log.d("DashboardViewModel", "Found transaction to delete: ${transactionToDelete.id}")
+                transactionRepository.deleteTransaction(transactionToDelete)
+            } else {
+                android.util.Log.e("DashboardViewModel", "Transaction with ID $transactionId not found")
             }
+        }
+    }
+    
+    fun undoDelete(transaction: Transaction) {
+        viewModelScope.launch {
+            // Insert the transaction back
+            transactionRepository.insertTransaction(transaction)
         }
     }
 } 

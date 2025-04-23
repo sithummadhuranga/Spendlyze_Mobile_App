@@ -94,6 +94,7 @@ class AddTransactionFragment : DialogFragment() {
         }
 
         val transaction = Transaction(
+            id = 0, // The repository will assign a proper ID
             amount = amount,
             description = description,
             category = category,

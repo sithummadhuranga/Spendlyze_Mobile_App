@@ -8,13 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spendlyze.R
 import com.example.spendlyze.adapters.TransactionAdapter
 import com.example.spendlyze.databinding.FragmentDashboardBinding
 import com.example.spendlyze.databinding.DialogUpdateBudgetBinding
 import com.example.spendlyze.models.Transaction
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -25,6 +28,7 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: DashboardViewModel by viewModels()
     private lateinit var transactionAdapter: TransactionAdapter
+    private var deletedTransaction: Transaction? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,9 +55,44 @@ class DashboardFragment : Fragment() {
                 showDeleteConfirmationDialog(transaction)
             }
         )
+        
         binding.recyclerRecentTransactions.apply {
             adapter = transactionAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            
+            // Setup swipe to delete
+            val swipeHandler = object : ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            ) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    // Get the transaction directly from the adapter's current list
+                    val position = viewHolder.adapterPosition
+                    if (position != RecyclerView.NO_POSITION && position < transactionAdapter.currentList.size) {
+                        val transaction = transactionAdapter.currentList[position]
+                        deletedTransaction = transaction
+                        viewModel.deleteTransaction(transaction.id)
+                        
+                        // Show undo snackbar
+                        Snackbar.make(
+                            binding.root,
+                            R.string.transaction_deleted,
+                            Snackbar.LENGTH_LONG
+                        ).setAction(R.string.undo) {
+                            deletedTransaction?.let { viewModel.undoDelete(it) }
+                        }.show()
+                    }
+                }
+            }
+            
+            ItemTouchHelper(swipeHandler).attachToRecyclerView(this)
         }
     }
 
@@ -106,7 +145,23 @@ class DashboardFragment : Fragment() {
             .setTitle(R.string.delete_transaction)
             .setMessage(R.string.delete_transaction_confirmation)
             .setPositiveButton(R.string.delete) { _, _ ->
+                // Store the transaction for undo
+                deletedTransaction = transaction
+                
+                // Log the transaction ID for debugging
+                android.util.Log.d("DashboardFragment", "Deleting transaction with ID: ${transaction.id}")
+                
+                // Delete the transaction
                 viewModel.deleteTransaction(transaction.id)
+                
+                // Show undo snackbar
+                Snackbar.make(
+                    binding.root,
+                    R.string.transaction_deleted,
+                    Snackbar.LENGTH_LONG
+                ).setAction(R.string.undo) {
+                    deletedTransaction?.let { viewModel.undoDelete(it) }
+                }.show()
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
