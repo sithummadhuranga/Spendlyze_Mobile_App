@@ -77,7 +77,14 @@ class DashboardFragment : Fragment() {
                     val position = viewHolder.adapterPosition
                     if (position != RecyclerView.NO_POSITION && position < transactionAdapter.currentList.size) {
                         val transaction = transactionAdapter.currentList[position]
+                        
+                        // Log for debugging
+                        android.util.Log.d("DashboardFragment", "Swiped transaction at position $position with ID: ${transaction.id}")
+                        
+                        // Store for undo
                         deletedTransaction = transaction
+                        
+                        // Delete the transaction
                         viewModel.deleteTransaction(transaction.id)
                         
                         // Show undo snackbar
@@ -92,6 +99,7 @@ class DashboardFragment : Fragment() {
                 }
             }
             
+            // Attach the ItemTouchHelper to the RecyclerView
             ItemTouchHelper(swipeHandler).attachToRecyclerView(this)
         }
     }

@@ -29,6 +29,7 @@ class TransactionAdapter(
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = getItem(position)
+        android.util.Log.d("TransactionAdapter", "Binding transaction at position $position with ID: ${transaction.id}")
         holder.bind(transaction)
     }
     
