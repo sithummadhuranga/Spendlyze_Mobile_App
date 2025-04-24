@@ -23,10 +23,24 @@ class TransactionRepository @Inject constructor(
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
     private var nextId: Long = 1
 
+    // Settings StateFlows
+    private val _monthlyBudget = MutableStateFlow(0.0)
+    private val _currency = MutableStateFlow("LKR")
+    private val _theme = MutableStateFlow("System Default")
+
+    val monthlyBudget = _monthlyBudget.asStateFlow()
+    val currency = _currency.asStateFlow()
+    val theme = _theme.asStateFlow()
+
     init {
         _transactions.value = getTransactionsFromPrefs()
         // Initialize nextId based on existing transactions
         nextId = (_transactions.value.maxOfOrNull { it.id } ?: 0) + 1
+        
+        // Initialize settings from SharedPreferences
+        _monthlyBudget.value = prefs.getFloat(KEY_MONTHLY_BUDGET, 0f).toDouble()
+        _currency.value = prefs.getString(KEY_CURRENCY, "LKR") ?: "LKR"
+        _theme.value = prefs.getString(KEY_THEME, "System Default") ?: "System Default"
     }
 
     fun getAllTransactions(): Flow<List<Transaction>> = _transactions.asStateFlow()
@@ -71,32 +85,35 @@ class TransactionRepository @Inject constructor(
 
     fun updateMonthlyBudget(amount: Double) {
         prefs.edit()
-            .putFloat("monthly_budget", amount.toFloat())
+            .putFloat(KEY_MONTHLY_BUDGET, amount.toFloat())
             .apply()
+        _monthlyBudget.value = amount
     }
 
     fun getMonthlyBudget(): Double {
-        return prefs.getFloat("monthly_budget", 0f).toDouble()
+        return _monthlyBudget.value
     }
 
     fun getCurrency(): String {
-        return prefs.getString(KEY_CURRENCY, "LKR") ?: "LKR"
+        return _currency.value
     }
 
     fun updateCurrency(currency: String) {
         prefs.edit()
             .putString(KEY_CURRENCY, currency)
             .apply()
+        _currency.value = currency
     }
 
     fun getTheme(): String {
-        return prefs.getString(KEY_THEME, "System Default") ?: "System Default"
+        return _theme.value
     }
 
     fun updateTheme(theme: String) {
         prefs.edit()
             .putString(KEY_THEME, theme)
             .apply()
+        _theme.value = theme
     }
 
     private fun getTransactionsFromPrefs(): List<Transaction> {

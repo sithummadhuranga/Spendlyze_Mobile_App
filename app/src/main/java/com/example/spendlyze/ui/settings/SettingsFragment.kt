@@ -34,15 +34,15 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.budgetCard.setOnClickListener {
+        binding.updateBudgetButton.setOnClickListener {
             showUpdateBudgetDialog()
         }
 
-        binding.currencyCard.setOnClickListener {
+        binding.updateCurrencyButton.setOnClickListener {
             showCurrencySelectionDialog()
         }
 
-        binding.themeCard.setOnClickListener {
+        binding.updateThemeButton.setOnClickListener {
             showThemeSelectionDialog()
         }
 

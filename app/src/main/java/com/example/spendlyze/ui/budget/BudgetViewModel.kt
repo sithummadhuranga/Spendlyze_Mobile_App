@@ -30,6 +30,20 @@ class BudgetViewModel @Inject constructor(
 
     init {
         loadBudgetData()
+        observeSettings()
+    }
+
+    private fun observeSettings() {
+        viewModelScope.launch {
+            transactionRepository.monthlyBudget.collectLatest { budget ->
+                loadBudgetData()
+            }
+        }
+        viewModelScope.launch {
+            transactionRepository.currency.collectLatest { currency ->
+                loadBudgetData()
+            }
+        }
     }
 
     private fun loadBudgetData() {

@@ -38,6 +38,20 @@ class DashboardViewModel @Inject constructor(
 
     init {
         loadDashboardData()
+        observeSettings()
+    }
+
+    private fun observeSettings() {
+        viewModelScope.launch {
+            transactionRepository.monthlyBudget.collectLatest { budget ->
+                loadDashboardData()
+            }
+        }
+        viewModelScope.launch {
+            transactionRepository.currency.collectLatest { currency ->
+                loadDashboardData()
+            }
+        }
     }
 
     private fun loadDashboardData() {
