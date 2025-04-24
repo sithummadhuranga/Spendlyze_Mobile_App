@@ -61,7 +61,7 @@ class EditTransactionFragment : DialogFragment() {
     }
 
     private fun loadTransactionData() {
-        transaction = arguments?.getParcelable("transaction")
+        transaction = arguments?.getParcelable("transaction", Transaction::class.java)
         transaction?.let { transaction ->
             binding.amountInput.setText(transaction.amount.toString())
             binding.descriptionInput.setText(transaction.description)

@@ -10,6 +10,7 @@
     <string name="title_transactions">Transactions</string>
     <string name="title_analysis">Analysis</string>
     <string name="title_budget">Budget</string>
+    <string name="title_settings">Settings</string>
     
     <!-- Dashboard -->
     <string name="total_balance">Total Balance</string>
@@ -73,4 +74,21 @@
     <string name="delete">Delete</string>
     <string name="transaction_deleted">Transaction deleted</string>
     <string name="undo">Undo</string>
+    
+    <!-- Settings -->
+    <string name="currency">Currency</string>
+    <string name="theme">Theme</string>
+    <string name="about">About</string>
+    <string name="version">Version 1.0.0</string>
+    <string name="select_currency">Select Currency</string>
+    <string name="select_theme">Select Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System Default</string>
+    <string name="currency_lkr">LKR - Sri Lankan Rupee</string>
+    <string name="currency_usd">USD - US Dollar</string>
+    <string name="currency_eur">EUR - Euro</string>
+    <string name="currency_gbp">GBP - British Pound</string>
+    <string name="currency_inr">INR - Indian Rupee</string>
+    <string name="update">Update</string>
 </resources>

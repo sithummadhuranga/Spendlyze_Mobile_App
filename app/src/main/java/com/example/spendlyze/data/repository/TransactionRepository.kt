@@ -79,6 +79,26 @@ class TransactionRepository @Inject constructor(
         return prefs.getFloat("monthly_budget", 0f).toDouble()
     }
 
+    fun getCurrency(): String {
+        return prefs.getString(KEY_CURRENCY, "LKR") ?: "LKR"
+    }
+
+    fun updateCurrency(currency: String) {
+        prefs.edit()
+            .putString(KEY_CURRENCY, currency)
+            .apply()
+    }
+
+    fun getTheme(): String {
+        return prefs.getString(KEY_THEME, "System Default") ?: "System Default"
+    }
+
+    fun updateTheme(theme: String) {
+        prefs.edit()
+            .putString(KEY_THEME, theme)
+            .apply()
+    }
+
     private fun getTransactionsFromPrefs(): List<Transaction> {
         val json = prefs.getString(KEY_TRANSACTIONS, "[]")
         val type = object : TypeToken<List<Transaction>>() {}.type
@@ -93,5 +113,8 @@ class TransactionRepository @Inject constructor(
     companion object {
         private const val PREFS_NAME = "transaction_prefs"
         private const val KEY_TRANSACTIONS = "transactions"
+        private const val KEY_MONTHLY_BUDGET = "monthly_budget"
+        private const val KEY_CURRENCY = "currency"
+        private const val KEY_THEME = "theme"
     }
 } 

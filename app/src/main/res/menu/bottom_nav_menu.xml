@@ -16,7 +16,7 @@
         android:title="@string/title_analysis" />
 
     <item
-        android:id="@+id/navigation_budget"
-        android:icon="@drawable/ic_budget"
-        android:title="@string/title_budget" />
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/title_settings" />
 </menu> 
