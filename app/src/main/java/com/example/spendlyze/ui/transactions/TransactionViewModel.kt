@@ -1,10 +1,10 @@
 package com.example.spendlyze.ui.transactions
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendlyze.data.repository.TransactionRepository
 import com.example.spendlyze.models.Transaction
 import com.example.spendlyze.models.TransactionType
+import com.example.spendlyze.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionViewModel @Inject constructor(
-    private val repository: TransactionRepository
-) : ViewModel() {
+    repository: TransactionRepository
+) : BaseViewModel(repository) {
 
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
     val transactions: StateFlow<List<Transaction>> = _transactions.asStateFlow()

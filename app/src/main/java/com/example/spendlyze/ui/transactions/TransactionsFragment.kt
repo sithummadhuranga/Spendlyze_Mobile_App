@@ -103,18 +103,19 @@ class TransactionsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.transactions.collectLatest { transactions ->
                 transactionAdapter.submitList(transactions)
-                updateEmptyState(transactions.isEmpty())
+                binding.emptyStateView.visibility = if (transactions.isEmpty()) View.VISIBLE else View.GONE
+            }
+        }
 
-                // Update total income and expenses
-                val income = transactions
-                    .filter { it.type == TransactionType.INCOME }
-                    .sumOf { it.amount }
-                val expenses = transactions
-                    .filter { it.type == TransactionType.EXPENSE }
-                    .sumOf { it.amount }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.totalIncome.collectLatest { income ->
+                binding.totalIncomeText.text = viewModel.formatCurrency(income)
+            }
+        }
 
-                binding.totalIncomeText.text = String.format("$%.2f", income)
-                binding.totalExpenseText.text = String.format("$%.2f", expenses)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.totalExpense.collectLatest { expense ->
+                binding.totalExpenseText.text = viewModel.formatCurrency(expense)
             }
         }
     }
