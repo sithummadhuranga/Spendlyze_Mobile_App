@@ -14,11 +14,14 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/background_dark</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/background_dark</item>
+        <item name="android:windowLightNavigationBar">false</item>
         
         <!-- Background colors -->
         <item name="android:colorBackground">@color/background_dark</item>
         <item name="colorSurface">@color/surface_dark</item>
         <item name="colorOnSurface">@color/text_primary_dark</item>
+        <item name="colorOnBackground">@color/text_primary_dark</item>
         
         <!-- Text colors -->
         <item name="android:textColorPrimary">@color/text_primary_dark</item>
@@ -26,5 +29,19 @@
         
         <!-- Card style -->
         <item name="materialCardViewStyle">@style/Widget.Spendlyze.CardView</item>
+        
+        <!-- Text appearances -->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.Spendlyze.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.Spendlyze.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.Spendlyze.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.Spendlyze.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.Spendlyze.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.Spendlyze.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Spendlyze.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.Spendlyze.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Spendlyze.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Spendlyze.Body2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Spendlyze.Caption</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Spendlyze.Button</item>
     </style>
 </resources> 
