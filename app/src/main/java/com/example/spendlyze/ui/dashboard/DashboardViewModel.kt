@@ -1,17 +1,18 @@
 package com.example.spendlyze.ui.dashboard
 
 import android.content.Context
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendlyze.data.repository.TransactionRepository
 import com.example.spendlyze.models.Transaction
 import com.example.spendlyze.models.TransactionType
+import com.example.spendlyze.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,16 +20,17 @@ import javax.inject.Inject
 data class DashboardState(
     val totalBalance: Double = 0.0,
     val totalIncome: Double = 0.0,
-    val totalExpenses: Double = 0.0,
+    val totalExpense: Double = 0.0,
     val monthlyBudget: Double = 0.0,
-    val recentTransactions: List<Transaction> = emptyList()
+    val recentTransactions: List<Transaction> = emptyList(),
+    val currency: String = "LKR"
 )
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val transactionRepository: TransactionRepository,
+    repository: TransactionRepository,
     @ApplicationContext private val context: Context
-) : ViewModel() {
+) : BaseViewModel(repository) {
     
     private val prefs = context.getSharedPreferences("spendlyze_prefs", Context.MODE_PRIVATE)
     private val _dashboardState = MutableStateFlow(DashboardState(
@@ -37,80 +39,68 @@ class DashboardViewModel @Inject constructor(
     val dashboardState: StateFlow<DashboardState> = _dashboardState.asStateFlow()
 
     init {
-        loadDashboardData()
+        loadDashboardState()
         observeSettings()
+    }
+
+    private fun loadDashboardState() {
+        viewModelScope.launch {
+            combine(
+                repository.getAllTransactions(),
+                repository.getTotalAmountByType(TransactionType.INCOME),
+                repository.getTotalAmountByType(TransactionType.EXPENSE),
+                repository.monthlyBudget,
+                repository.currency
+            ) { transactions, income, expense, budget, currentCurrency ->
+                DashboardState(
+                    totalBalance = income - expense,
+                    totalIncome = income,
+                    totalExpense = expense,
+                    monthlyBudget = budget,
+                    recentTransactions = transactions.take(5),
+                    currency = currentCurrency
+                )
+            }.collect { state ->
+                _dashboardState.value = state
+            }
+        }
     }
 
     private fun observeSettings() {
         viewModelScope.launch {
-            transactionRepository.monthlyBudget.collectLatest { budget ->
-                loadDashboardData()
+            repository.monthlyBudget.collectLatest { _ ->
+                loadDashboardState()
             }
         }
         viewModelScope.launch {
-            transactionRepository.currency.collectLatest { currency ->
-                loadDashboardData()
-            }
-        }
-    }
-
-    private fun loadDashboardData() {
-        viewModelScope.launch {
-            val monthlyBudget = transactionRepository.getMonthlyBudget()
-            
-            transactionRepository.getAllTransactions().collectLatest { transactions ->
-                val totalIncome = transactions
-                    .filter { it.type == TransactionType.INCOME }
-                    .sumOf { it.amount }
-                val totalExpenses = transactions
-                    .filter { it.type == TransactionType.EXPENSE }
-                    .sumOf { it.amount }
-                val balance = totalIncome - totalExpenses
-                
-                _dashboardState.value = DashboardState(
-                    totalBalance = balance,
-                    totalIncome = totalIncome,
-                    totalExpenses = totalExpenses,
-                    monthlyBudget = monthlyBudget,
-                    recentTransactions = transactions.take(5)
-                )
+            repository.currency.collectLatest { _ ->
+                loadDashboardState()
             }
         }
     }
 
     fun updateMonthlyBudget(amount: Double) {
         viewModelScope.launch {
-            transactionRepository.updateMonthlyBudget(amount)
-            loadDashboardData()
+            repository.updateMonthlyBudget(amount)
         }
     }
 
     fun deleteTransaction(transactionId: Long) {
         viewModelScope.launch {
-            // Get the current list of transactions
-            val currentTransactions = transactionRepository.getAllTransactions().first()
-            
-            // Log the transaction ID and current transactions for debugging
-            android.util.Log.d("DashboardViewModel", "Attempting to delete transaction with ID: $transactionId")
-            android.util.Log.d("DashboardViewModel", "Current transactions: ${currentTransactions.map { it.id }}")
-            
-            // Find the transaction to delete by ID
-            val transactionToDelete = currentTransactions.find { it.id == transactionId }
-            
-            // Log if transaction was found
-            if (transactionToDelete != null) {
-                android.util.Log.d("DashboardViewModel", "Found transaction to delete: ${transactionToDelete.id}")
-                transactionRepository.deleteTransaction(transactionToDelete)
-            } else {
-                android.util.Log.e("DashboardViewModel", "Transaction with ID $transactionId not found")
+            try {
+                val transactions = repository.getAllTransactions().first()
+                transactions.find { it.id == transactionId }?.let { transaction ->
+                    repository.deleteTransaction(transaction)
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("DashboardViewModel", "Error deleting transaction: ${e.message}")
             }
         }
     }
     
     fun undoDelete(transaction: Transaction) {
         viewModelScope.launch {
-            // Insert the transaction back
-            transactionRepository.insertTransaction(transaction)
+            repository.insertTransaction(transaction)
         }
     }
 } 

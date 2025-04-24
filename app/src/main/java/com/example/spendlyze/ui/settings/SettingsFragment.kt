@@ -11,6 +11,7 @@ import com.example.spendlyze.databinding.FragmentSettingsBinding
 import com.example.spendlyze.databinding.DialogUpdateBudgetBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.appcompat.app.AppCompatDelegate
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
@@ -54,7 +55,7 @@ class SettingsFragment : Fragment() {
     private fun observeSettingsState() {
         viewModel.settingsState.observe(viewLifecycleOwner) { state ->
             binding.apply {
-                currentBudgetText.text = getString(R.string.currency_format, state.monthlyBudget)
+                currentBudgetText.text = viewModel.formatCurrency(state.monthlyBudget)
                 currentCurrencyText.text = state.currency
                 currentThemeText.text = state.theme
             }
@@ -91,7 +92,10 @@ class SettingsFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.select_currency)
             .setItems(currencies) { _, which ->
-                viewModel.updateCurrency(currencies[which])
+                val selectedCurrency = currencies[which]
+                // Extract the currency code (e.g., "LKR" from "LKR - Sri Lankan Rupee")
+                val currencyCode = selectedCurrency.split(" - ")[0]
+                viewModel.updateCurrency(currencyCode)
             }
             .show()
     }
@@ -106,9 +110,20 @@ class SettingsFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.select_theme)
             .setItems(themes) { _, which ->
-                viewModel.updateTheme(themes[which])
+                val selectedTheme = themes[which]
+                viewModel.updateTheme(selectedTheme)
+                updateTheme(selectedTheme)
             }
             .show()
+    }
+
+    private fun updateTheme(theme: String) {
+        val mode = when (theme) {
+            getString(R.string.theme_light) -> AppCompatDelegate.MODE_NIGHT_NO
+            getString(R.string.theme_dark) -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun showAboutDialog() {

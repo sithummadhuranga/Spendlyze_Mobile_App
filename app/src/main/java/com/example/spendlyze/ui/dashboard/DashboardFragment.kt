@@ -60,7 +60,6 @@ class DashboardFragment : Fragment() {
             adapter = transactionAdapter
             layoutManager = LinearLayoutManager(requireContext())
             
-            // Setup swipe to delete
             val swipeHandler = object : ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             ) {
@@ -68,26 +67,14 @@ class DashboardFragment : Fragment() {
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder,
                     target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return false
-                }
+                ): Boolean = false
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    // Get the transaction directly from the adapter's current list
                     val position = viewHolder.adapterPosition
                     if (position != RecyclerView.NO_POSITION && position < transactionAdapter.currentList.size) {
                         val transaction = transactionAdapter.currentList[position]
-                        
-                        // Log for debugging
-                        android.util.Log.d("DashboardFragment", "Swiped transaction at position $position with ID: ${transaction.id}")
-                        
-                        // Store for undo
                         deletedTransaction = transaction
-                        
-                        // Delete the transaction
                         viewModel.deleteTransaction(transaction.id)
-                        
-                        // Show undo snackbar
                         Snackbar.make(
                             binding.root,
                             R.string.transaction_deleted,
@@ -99,7 +86,6 @@ class DashboardFragment : Fragment() {
                 }
             }
             
-            // Attach the ItemTouchHelper to the RecyclerView
             ItemTouchHelper(swipeHandler).attachToRecyclerView(this)
         }
     }
@@ -116,7 +102,7 @@ class DashboardFragment : Fragment() {
 
     private fun showUpdateBudgetDialog() {
         val dialogBinding = DialogUpdateBudgetBinding.inflate(layoutInflater)
-        val dialog = MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.monthly_budget)
             .setView(dialogBinding.root)
             .setPositiveButton(R.string.save) { dialog, _ ->
@@ -128,20 +114,20 @@ class DashboardFragment : Fragment() {
                 dialog.dismiss()
             }
             .create()
-        dialog.show()
+            .show()
     }
 
     private fun observeDashboardState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.dashboardState.collectLatest { state ->
+            viewModel.dashboardState.collect { state ->
                 binding.apply {
-                    textTotalBalance.text = getString(R.string.currency_format, state.totalBalance)
-                    textIncome.text = getString(R.string.currency_format, state.totalIncome)
-                    textExpenses.text = getString(R.string.currency_format, state.totalExpenses)
-                    textMonthlyBudget.text = getString(R.string.currency_format, state.monthlyBudget)
-                    progressBudget.progress = ((state.totalExpenses / state.monthlyBudget) * 100).toInt()
-                    textSpent.text = getString(R.string.currency_format, state.totalExpenses)
-                    textRemaining.text = getString(R.string.currency_format, state.monthlyBudget - state.totalExpenses)
+                    textTotalBalance.text = viewModel.formatCurrency(state.totalBalance)
+                    textIncome.text = viewModel.formatCurrency(state.totalIncome)
+                    textExpenses.text = viewModel.formatCurrency(state.totalExpense)
+                    textMonthlyBudget.text = viewModel.formatCurrency(state.monthlyBudget)
+                    progressBudget.progress = ((state.totalExpense / state.monthlyBudget) * 100).toInt()
+                    textSpent.text = viewModel.formatCurrency(state.totalExpense)
+                    textRemaining.text = viewModel.formatCurrency(state.monthlyBudget - state.totalExpense)
                     transactionAdapter.submitList(state.recentTransactions)
                 }
             }
@@ -153,16 +139,8 @@ class DashboardFragment : Fragment() {
             .setTitle(R.string.delete_transaction)
             .setMessage(R.string.delete_transaction_confirmation)
             .setPositiveButton(R.string.delete) { _, _ ->
-                // Store the transaction for undo
                 deletedTransaction = transaction
-                
-                // Log the transaction ID for debugging
-                android.util.Log.d("DashboardFragment", "Deleting transaction with ID: ${transaction.id}")
-                
-                // Delete the transaction
                 viewModel.deleteTransaction(transaction.id)
-                
-                // Show undo snackbar
                 Snackbar.make(
                     binding.root,
                     R.string.transaction_deleted,

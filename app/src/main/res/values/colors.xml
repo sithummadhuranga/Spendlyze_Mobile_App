@@ -5,12 +5,23 @@
     <color name="primary_dark">#0039CB</color>
     <color name="primary_light">#768FFF</color>
     <color name="accent">#FF6B6B</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondary">#FF6B6B</color>
+    <color name="secondary_dark">#C73E3E</color>
+    <color name="secondary_light">#FF9E9E</color>
 
     <!-- Neutral Colors -->
     <color name="background">#F8F9FA</color>
     <color name="surface">#FFFFFF</color>
     <color name="on_surface">#1E1E1E</color>
     <color name="on_background">#000000</color>
+    
+    <!-- Dark Theme Colors -->
+    <color name="background_dark">#121212</color>
+    <color name="surface_dark">#1E1E1E</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#B3FFFFFF</color>
 
     <!-- Text Colors -->
     <color name="text_primary">#1E1E1E</color>

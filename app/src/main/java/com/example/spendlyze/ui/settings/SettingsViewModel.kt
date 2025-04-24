@@ -8,6 +8,9 @@ import com.example.spendlyze.data.repository.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import java.text.NumberFormat
+import java.util.Currency
+import java.util.Locale
 
 data class SettingsState(
     val monthlyBudget: Double = 0.0,
@@ -55,8 +58,10 @@ class SettingsViewModel @Inject constructor(
     fun updateCurrency(currency: String) {
         viewModelScope.launch {
             try {
-                repository.updateCurrency(currency)
-                _settingsState.value = _settingsState.value?.copy(currency = currency)
+                // Ensure we're using just the currency code
+                val currencyCode = currency.split(" - ")[0]
+                repository.updateCurrency(currencyCode)
+                _settingsState.value = _settingsState.value?.copy(currency = currencyCode)
             } catch (e: Exception) {
                 // Handle error
             }
@@ -72,5 +77,11 @@ class SettingsViewModel @Inject constructor(
                 // Handle error
             }
         }
+    }
+
+    fun formatCurrency(amount: Double): String {
+        val formatter = NumberFormat.getCurrencyInstance()
+        formatter.currency = Currency.getInstance(_settingsState.value?.currency ?: "LKR")
+        return formatter.format(amount)
     }
 } 
