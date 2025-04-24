@@ -76,6 +76,12 @@ class TransactionRepository @Inject constructor(
         saveTransactionsToPrefs(currentList)
     }
 
+    suspend fun deleteAllTransactions() {
+        _transactions.value = emptyList()
+        saveTransactionsToPrefs(emptyList())
+        nextId = 1
+    }
+
     fun getTotalAmountByType(type: TransactionType): Flow<Double> =
         _transactions.map { transactions ->
             transactions
