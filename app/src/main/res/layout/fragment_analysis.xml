@@ -7,47 +7,33 @@
     android:padding="16dp">
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/chartCard"
+        android:id="@+id/cardChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:cardCornerRadius="8dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
-        app:layout_constraintBottom_toTopOf="@id/legendCard"
+        app:layout_constraintBottom_toTopOf="@id/legendContainer"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/spending_analysis"
-                android:textAppearance="?attr/textAppearanceHeadline6" />
-
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_weight="1" />
-        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/legendCard"
+        android:id="@+id/legendContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="8dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@id/cardSummary">
 
         <LinearLayout
-            android:id="@+id/legendContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -56,251 +42,63 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/category_breakdown"
-                android:textAppearance="?attr/textAppearanceHeadline6" />
+                android:text="Expense Categories"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
             <LinearLayout
+                android:id="@+id/legendLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:divider="@drawable/divider"
+                android:showDividers="middle"/>
 
-                <!-- Food -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_food" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Food"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvFoodLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Food: $5,000.00 (25%)" />
-                </LinearLayout>
-
-                <!-- Transport -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_transport" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Transport"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvTransportLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Transport: $3,000.00 (15%)" />
-                </LinearLayout>
-
-                <!-- Shopping -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_shopping" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Shopping"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvShoppingLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Shopping: $8,000.00 (40%)" />
-                </LinearLayout>
-
-                <!-- Bills -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_bills" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Bills"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvBillsLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Bills: $12,000.00 (60%)" />
-                </LinearLayout>
-
-                <!-- Entertainment -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_entertainment" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Entertainment"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvEntertainmentLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Entertainment: $2,000.00 (10%)" />
-                </LinearLayout>
-
-                <!-- Health -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_health" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Health"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvHealthLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Health: $1,500.00 (7.5%)" />
-                </LinearLayout>
-
-                <!-- Education -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_education" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Education"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvEducationLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Education: $3,500.00 (17.5%)" />
-                </LinearLayout>
-
-                <!-- Other -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@color/category_other" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="Other"
-                        android:textAppearance="?attr/textAppearanceBody1" />
-
-                    <TextView
-                        android:id="@+id/tvOtherLegend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="Other: $2,000.00 (10%)" />
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
-    <TextView
-        android:id="@+id/tvNoData"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSummary"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/no_data"
-        android:textAppearance="?attr/textAppearanceBody1"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Summary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvTotalExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvNoData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No expense data available"
+                android:textAlignment="center"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout> 
