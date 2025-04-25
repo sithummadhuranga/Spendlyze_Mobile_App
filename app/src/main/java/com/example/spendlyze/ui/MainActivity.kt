@@ -1,12 +1,14 @@
 package com.example.spendlyze.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.spendlyze.R
 import com.example.spendlyze.data.repository.TransactionRepository
+import com.example.spendlyze.data.repository.UserRepository
 import com.example.spendlyze.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -17,6 +19,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var transactionRepository: TransactionRepository
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,25 @@ class MainActivity : AppCompatActivity() {
 
         // Setup the bottom navigation with the navigation controller
         binding.navView.setupWithNavController(navController)
+
+        // Hide bottom navigation initially
+        binding.navView.visibility = View.GONE
+
+        // Observe navigation changes to show/hide bottom navigation
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.navigation_login, R.id.navigation_signup -> {
+                    binding.navView.visibility = View.GONE
+                }
+                else -> {
+                    if (userRepository.isLoggedIn()) {
+                        binding.navView.visibility = View.VISIBLE
+                    } else {
+                        binding.navView.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
     private fun applyTheme() {

@@ -1,4 +1,4 @@
-package com.example.spendlyze.data.repository
+package com.example.spendlyze.data
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -93,4 +93,4 @@ class UserRepository @Inject constructor(
         private const val KEY_CURRENT_USER = "current_user"
         private const val KEY_USERS = "users"
     }
-}
+} 
