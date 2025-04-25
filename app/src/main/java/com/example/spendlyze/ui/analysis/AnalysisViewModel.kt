@@ -23,6 +23,10 @@ class AnalysisViewModel @Inject constructor(
         loadTransactions()
     }
 
+    fun getCurrency(): String {
+        return transactionRepository.getCurrency()
+    }
+
     private fun loadTransactions() {
         viewModelScope.launch {
             transactionRepository.getAllTransactions().collect { transactions ->

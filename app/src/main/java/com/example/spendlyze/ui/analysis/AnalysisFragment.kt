@@ -186,7 +186,7 @@ class AnalysisFragment : Fragment() {
             legendLayout?.addView(legendItem)
         }
 
-        // Update total expenses
+        // Update total expenses with proper currency formatting
         binding.tvTotalExpenses.text = String.format(
             "Total Expenses: %s",
             formatCurrency(totalExpenses)
@@ -194,7 +194,8 @@ class AnalysisFragment : Fragment() {
     }
 
     private fun formatCurrency(amount: Double): String {
-        return NumberFormat.getCurrencyInstance().format(amount)
+        val currency = viewModel.getCurrency()
+        return String.format("%s %.2f", currency, amount)
     }
 
     override fun onDestroyView() {
