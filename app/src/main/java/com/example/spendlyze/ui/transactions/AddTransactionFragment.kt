@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.spendlyze.R
@@ -146,7 +147,9 @@ class AddTransactionFragment : DialogFragment() {
             type = type
         )
 
-        viewModel.addTransaction(transaction)
+        viewModel.addTransaction(transaction) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
         dismiss()
     }
 

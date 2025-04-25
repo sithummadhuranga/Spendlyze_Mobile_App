@@ -1,5 +1,6 @@
 package com.example.spendlyze.ui.transactions
 
+import android.widget.Toast
 import androidx.lifecycle.viewModelScope
 import com.example.spendlyze.data.repository.TransactionRepository
 import com.example.spendlyze.models.Transaction
@@ -49,15 +50,17 @@ class TransactionViewModel @Inject constructor(
             .sumOf { it.amount }
     }
 
-    fun addTransaction(transaction: Transaction) {
+    fun addTransaction(transaction: Transaction, showToast: (String) -> Unit) {
         viewModelScope.launch {
             repository.insertTransaction(transaction)
+            showToast("Added ${transaction.amount} to ${transaction.category}")
         }
     }
 
-    fun updateTransaction(transaction: Transaction) {
+    fun updateTransaction(transaction: Transaction, showToast: (String) -> Unit) {
         viewModelScope.launch {
             repository.updateTransaction(transaction)
+            showToast("Updated transaction: ${transaction.amount} in ${transaction.category}")
         }
     }
 
