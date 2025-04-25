@@ -48,7 +48,7 @@ class DashboardFragment : Fragment() {
 
     private fun setupRecyclerView() {
         transactionAdapter = TransactionAdapter(
-            onTransactionClick = { transaction ->
+            onTransactionClick = { _ ->
                 // Handle transaction click
             },
             onTransactionLongClick = { transaction ->
@@ -106,7 +106,7 @@ class DashboardFragment : Fragment() {
             .setTitle(R.string.monthly_budget)
             .setView(dialogBinding.root)
             .setPositiveButton(R.string.save) { dialog, _ ->
-                val newBudget = dialogBinding.budgetInput.text.toString().toDoubleOrNull() ?: 0.0
+                val newBudget = dialogBinding.amountInput.text.toString().toDoubleOrNull() ?: 0.0
                 viewModel.updateMonthlyBudget(newBudget)
                 dialog.dismiss()
             }

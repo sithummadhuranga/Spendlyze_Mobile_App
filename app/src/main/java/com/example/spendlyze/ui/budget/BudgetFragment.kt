@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.spendlyze.R
 import com.example.spendlyze.adapters.TransactionAdapter
 import com.example.spendlyze.databinding.FragmentBudgetBinding
-import com.example.spendlyze.models.TransactionType
+import com.example.spendlyze.models.Transaction
 import com.example.spendlyze.databinding.DialogUpdateBudgetBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +44,7 @@ class BudgetFragment : Fragment() {
 
     private fun setupRecyclerView() {
         transactionAdapter = TransactionAdapter(
-            onTransactionClick = { transaction ->
+            onTransactionClick = { _ ->
                 // Navigate to transaction details or edit screen
                 // TODO: Implement transaction details navigation
             },
@@ -53,9 +53,10 @@ class BudgetFragment : Fragment() {
                 showDeleteConfirmationDialog(transaction.id)
             }
         )
+        
         binding.recentExpensesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
             adapter = transactionAdapter
-            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -121,7 +122,7 @@ class BudgetFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setView(dialogBinding.root)
             .setPositiveButton("Update") { dialog, _ ->
-                val amount = dialogBinding.budgetInput.text.toString().toDoubleOrNull()
+                val amount = dialogBinding.amountInput.text.toString().toDoubleOrNull()
                 if (amount != null && amount > 0) {
                     viewModel.updateMonthlyBudget(amount)
                 }

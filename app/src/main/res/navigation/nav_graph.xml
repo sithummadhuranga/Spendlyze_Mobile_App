@@ -2,22 +2,22 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/navigation_dashboard">
+    app:startDestination="@id/navigation_login">
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.example.spendlyze.ui.login.LoginFragment"
+        android:label="@string/title_login" />
+
+    <fragment
+        android:id="@+id/navigation_signup"
+        android:name="com.example.spendlyze.ui.signup.SignupFragment"
+        android:label="@string/title_signup" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.spendlyze.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard" />
-
-    <fragment
-        android:id="@+id/navigation_transactions"
-        android:name="com.example.spendlyze.ui.transactions.TransactionsFragment"
-        android:label="@string/title_transactions" />
-
-    <fragment
-        android:id="@+id/navigation_analysis"
-        android:name="com.example.spendlyze.ui.analysis.AnalysisFragment"
-        android:label="@string/title_analysis" />
 
     <fragment
         android:id="@+id/navigation_settings"

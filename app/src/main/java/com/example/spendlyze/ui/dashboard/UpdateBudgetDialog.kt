@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.example.spendlyze.R
 import com.example.spendlyze.databinding.DialogUpdateBudgetBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 
 class UpdateBudgetDialog : DialogFragment() {
     private var _binding: DialogUpdateBudgetBinding? = null
@@ -19,18 +21,25 @@ class UpdateBudgetDialog : DialogFragment() {
         _binding = DialogUpdateBudgetBinding.inflate(layoutInflater)
         
         return MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Update Budget")
+            .setTitle(R.string.monthly_budget)
             .setView(binding.root)
-            .setPositiveButton("Update") { _, _ ->
-                val budgetText = binding.budgetInput.text.toString()
+            .setPositiveButton(R.string.update) { dialog, _ ->
+                val budgetText = binding.amountInput.text.toString()
                 if (budgetText.isNotEmpty()) {
                     val budget = budgetText.toDoubleOrNull()
                     if (budget != null && budget >= 0) {
                         viewModel.updateMonthlyBudget(budget)
+                        dialog.dismiss()
+                    } else {
+                        Snackbar.make(binding.root, R.string.error_invalid_input, Snackbar.LENGTH_SHORT).show()
                     }
+                } else {
+                    Snackbar.make(binding.root, R.string.error_invalid_input, Snackbar.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
             .create()
     }
 

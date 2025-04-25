@@ -5,6 +5,10 @@
     <string name="skip">Skip</string>
     <string name="onboarding_image">Onboarding Image</string>
     
+    <!-- Authentication -->
+    <string name="title_login">Login</string>
+    <string name="title_signup">Sign Up</string>
+    
     <!-- Bottom Navigation -->
     <string name="title_dashboard">Dashboard</string>
     <string name="title_transactions">Transactions</string>
@@ -28,7 +32,7 @@
     <string name="no_transactions">No Transactions</string>
     <string name="empty_transactions">Empty Transactions</string>
     <string name="add_transaction_to_get_started">Add a transaction to get started</string>
-    <string name="amount">Amount (LKR)</string>
+    <string name="amount">Amount</string>
     <string name="description">Description</string>
     <string name="category">Category</string>
     <string name="date">Date</string>
@@ -80,6 +84,7 @@
     <string name="undo">Undo</string>
     
     <!-- Settings -->
+    <string name="dark_mode">Dark Mode</string>
     <string name="currency">Currency</string>
     <string name="theme">Theme</string>
     <string name="about">About</string>
@@ -95,4 +100,18 @@
     <string name="currency_gbp">GBP - British Pound</string>
     <string name="currency_inr">INR - Indian Rupee</string>
     <string name="update">Update</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirmation">Are you sure you want to logout?</string>
+    <string name="type">Type</string>
+    
+    <!-- Common -->
+    <string name="total_income">Total Income</string>
+    <string name="total_expenses">Total Expenses</string>
+    <string name="balance">Balance</string>
+    <string name="expense_categories">Expense Categories</string>
+    <string name="income_categories">Income Categories</string>
+    
+    <!-- Budget -->
+    <string name="budget_limit">Budget Limit</string>
+    <string name="update_budget">Update Budget</string>
 </resources>
