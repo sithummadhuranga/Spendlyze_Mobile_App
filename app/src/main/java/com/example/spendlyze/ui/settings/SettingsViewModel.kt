@@ -1,8 +1,12 @@
 package com.example.spendlyze.ui.settings
 
+import android.app.Activity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendlyze.data.repository.SettingsRepository
+import com.example.spendlyze.data.repository.TransactionRepository
+import com.example.spendlyze.data.repository.UserRepository
+import com.example.spendlyze.models.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,15 +15,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SettingsState(
-    val isDarkMode: Boolean = false,
-    val currency: String = "USD",
+    val theme: String = "System Default",
+    val currency: String = "LKR",
     val monthlyBudget: Double = 0.0
 )
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val transactionRepository: TransactionRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
+
+    val currentUser: User? = userRepository.getCurrentUser()
 
     private val _settingsState = MutableStateFlow(SettingsState())
     val settingsState: StateFlow<SettingsState> = _settingsState.asStateFlow()
@@ -30,38 +37,37 @@ class SettingsViewModel @Inject constructor(
 
     private fun loadSettings() {
         viewModelScope.launch {
-            val theme = settingsRepository.getTheme()
-            val currency = settingsRepository.getCurrency()
             _settingsState.value = SettingsState(
-                isDarkMode = theme == "dark",
-                currency = currency
+                theme = transactionRepository.getTheme(),
+                currency = transactionRepository.getCurrency(),
+                monthlyBudget = transactionRepository.getMonthlyBudget()
             )
         }
     }
 
-    fun setTheme(theme: String) {
-        viewModelScope.launch {
-            settingsRepository.setTheme(theme)
-            _settingsState.value = _settingsState.value.copy(
-                isDarkMode = theme == "dark"
-            )
+    fun updateTheme(theme: String) {
+        transactionRepository.updateTheme(theme)
+        _settingsState.value = _settingsState.value.copy(theme = theme)
+        
+        // Apply theme immediately
+        when (theme) {
+            "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
 
-    fun getCurrency(): String = settingsRepository.getCurrency()
-
-    fun setCurrency(currency: String) {
-        viewModelScope.launch {
-            settingsRepository.setCurrency(currency)
-            _settingsState.value = _settingsState.value.copy(
-                currency = currency
-            )
-        }
+    fun updateCurrency(currency: String) {
+        transactionRepository.updateCurrency(currency)
+        _settingsState.value = _settingsState.value.copy(currency = currency)
     }
 
     fun updateMonthlyBudget(amount: Double) {
-        _settingsState.value = _settingsState.value.copy(
-            monthlyBudget = amount
-        )
+        transactionRepository.updateMonthlyBudget(amount)
+        _settingsState.value = _settingsState.value.copy(monthlyBudget = amount)
+    }
+
+    fun logout() {
+        userRepository.logout()
     }
 } 

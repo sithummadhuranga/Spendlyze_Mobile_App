@@ -1,4 +1,4 @@
-package com.example.spendlyze.data.repository
+ package com.example.spendlyze.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -25,23 +25,14 @@ class UserRepository @Inject constructor(
     }
 
     fun login(email: String, password: String): Boolean {
-        // Get stored users
-        val usersJson = prefs.getString(KEY_USERS, "[]")
-        val users = gson.fromJson<List<User>>(usersJson, object : com.google.gson.reflect.TypeToken<List<User>>() {}.type)
+        // In a real app, this would make an API call
+        // For demo, we'll just create a mock user
+        val user = User(
+            id = "1",
+            username = email.split("@")[0],
+            email = email
+        )
         
-        // Find user with matching email and password
-        val user = users.find { it.email == email }
-        if (user == null) {
-            return false
-        }
-        
-        // In a real app, we would verify the password hash
-        // For demo, we'll just check if the password is not empty
-        if (password.isEmpty()) {
-            return false
-        }
-        
-        // Set current user and login state
         prefs.edit()
             .putBoolean(KEY_IS_LOGGED_IN, true)
             .putString(KEY_CURRENT_USER, gson.toJson(user))
@@ -51,28 +42,17 @@ class UserRepository @Inject constructor(
     }
 
     fun signUp(username: String, email: String, password: String): Boolean {
-        // Get existing users
-        val usersJson = prefs.getString(KEY_USERS, "[]")
-        val users = gson.fromJson<List<User>>(usersJson, object : com.google.gson.reflect.TypeToken<List<User>>() {}.type)
-        
-        // Check if email already exists
-        if (users.any { it.email == email }) {
-            return false
-        }
-        
-        // Create new user
-        val newUser = User(
-            id = System.currentTimeMillis().toString(),
+        // In a real app, this would make an API call
+        // For demo, we'll just create a mock user
+        val user = User(
+            id = "1",
             username = username,
             email = email
         )
         
-        // Add new user to list and save
-        val updatedUsers = users + newUser
         prefs.edit()
-            .putString(KEY_USERS, gson.toJson(updatedUsers))
             .putBoolean(KEY_IS_LOGGED_IN, true)
-            .putString(KEY_CURRENT_USER, gson.toJson(newUser))
+            .putString(KEY_CURRENT_USER, gson.toJson(user))
             .apply()
             
         return true
@@ -89,6 +69,5 @@ class UserRepository @Inject constructor(
         private const val PREFS_NAME = "user_prefs"
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
         private const val KEY_CURRENT_USER = "current_user"
-        private const val KEY_USERS = "users"
     }
 }
