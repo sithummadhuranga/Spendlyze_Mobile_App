@@ -76,14 +76,58 @@ class AddTransactionFragment : DialogFragment() {
         ).show()
     }
 
+    private fun validateAmount(amount: Double?): Boolean {
+        if (amount == null) {
+            showError("Please enter a valid amount")
+            return false
+        }
+        if (amount <= 0) {
+            showError("Amount must be greater than 0")
+            return false
+        }
+        return true
+    }
+
+    private fun validateDescription(description: String): Boolean {
+        if (description.isEmpty()) {
+            showError("Description cannot be empty")
+            return false
+        }
+        if (description.length < 3) {
+            showError("Description must be at least 3 characters long")
+            return false
+        }
+        return true
+    }
+
+    private fun validateDate(date: Calendar): Boolean {
+        val today = Calendar.getInstance()
+        if (date.after(today)) {
+            showError("Cannot add transactions for future dates")
+            return false
+        }
+        return true
+    }
+
+    private fun showError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    }
+
     private fun saveTransaction() {
         val amount = binding.amountInput.text.toString().toDoubleOrNull()
         val description = binding.descriptionInput.text.toString()
         val category = selectedCategory
         val dateStr = binding.dateInput.text.toString()
 
-        if (amount == null || description.isEmpty() || dateStr.isEmpty()) {
-            Snackbar.make(binding.root, "Please fill all fields", Snackbar.LENGTH_SHORT).show()
+        // Validate all fields
+        if (!validateAmount(amount) || 
+            !validateDescription(description) || 
+            !validateDate(selectedDate)) {
+            return
+        }
+
+        if (dateStr.isEmpty()) {
+            showError("Please select a date")
             return
         }
 
@@ -95,7 +139,7 @@ class AddTransactionFragment : DialogFragment() {
 
         val transaction = Transaction(
             id = 0, // The repository will assign a proper ID
-            amount = amount,
+            amount = amount!!,
             description = description,
             category = category,
             date = selectedDate.time,

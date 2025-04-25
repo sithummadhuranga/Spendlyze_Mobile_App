@@ -35,13 +35,40 @@ class LoginFragment : Fragment() {
         observeAuthState()
     }
 
+    private fun validateEmail(email: String): Boolean {
+        if (email.isBlank()) {
+            showError("Email cannot be empty")
+            return false
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showError("Please enter a valid email address")
+            return false
+        }
+        return true
+    }
+
+    private fun validatePassword(password: String): Boolean {
+        if (password.isBlank()) {
+            showError("Password cannot be empty")
+            return false
+        }
+        if (password.length < 6) {
+            showError("Password must be at least 6 characters long")
+            return false
+        }
+        return true
+    }
+
+    private fun showError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    }
+
     private fun setupClickListeners() {
         binding.buttonLogin.setOnClickListener {
             val email = binding.inputEmail.text.toString()
             val password = binding.inputPassword.text.toString()
             
-            if (email.isBlank() || password.isBlank()) {
-                Snackbar.make(binding.root, "Please fill all fields", Snackbar.LENGTH_SHORT).show()
+            if (!validateEmail(email) || !validatePassword(password)) {
                 return@setOnClickListener
             }
             

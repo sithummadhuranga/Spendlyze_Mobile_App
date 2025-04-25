@@ -35,6 +35,70 @@ class SignUpFragment : Fragment() {
         observeAuthState()
     }
 
+    private fun validateUsername(username: String): Boolean {
+        if (username.isBlank()) {
+            showError("Username cannot be empty")
+            return false
+        }
+        if (username.length < 3) {
+            showError("Username must be at least 3 characters long")
+            return false
+        }
+        if (!username.matches(Regex("^[a-zA-Z0-9_]+$"))) {
+            showError("Username can only contain letters, numbers, and underscores")
+            return false
+        }
+        return true
+    }
+
+    private fun validateEmail(email: String): Boolean {
+        if (email.isBlank()) {
+            showError("Email cannot be empty")
+            return false
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showError("Please enter a valid email address")
+            return false
+        }
+        return true
+    }
+
+    private fun validatePassword(password: String): Boolean {
+        if (password.isBlank()) {
+            showError("Password cannot be empty")
+            return false
+        }
+        if (password.length < 6) {
+            showError("Password must be at least 6 characters long")
+            return false
+        }
+        if (!password.matches(Regex(".*[A-Z].*"))) {
+            showError("Password must contain at least one uppercase letter")
+            return false
+        }
+        if (!password.matches(Regex(".*[0-9].*"))) {
+            showError("Password must contain at least one number")
+            return false
+        }
+        return true
+    }
+
+    private fun validateConfirmPassword(password: String, confirmPassword: String): Boolean {
+        if (confirmPassword.isBlank()) {
+            showError("Please confirm your password")
+            return false
+        }
+        if (password != confirmPassword) {
+            showError("Passwords do not match")
+            return false
+        }
+        return true
+    }
+
+    private fun showError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    }
+
     private fun setupClickListeners() {
         binding.buttonSignUp.setOnClickListener {
             val username = binding.inputUsername.text.toString()
@@ -42,13 +106,10 @@ class SignUpFragment : Fragment() {
             val password = binding.inputPassword.text.toString()
             val confirmPassword = binding.inputConfirmPassword.text.toString()
             
-            if (username.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
-                Snackbar.make(binding.root, "Please fill all fields", Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            
-            if (password != confirmPassword) {
-                Snackbar.make(binding.root, "Passwords do not match", Snackbar.LENGTH_SHORT).show()
+            if (!validateUsername(username) || 
+                !validateEmail(email) || 
+                !validatePassword(password) || 
+                !validateConfirmPassword(password, confirmPassword)) {
                 return@setOnClickListener
             }
             
